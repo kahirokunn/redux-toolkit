@@ -24,26 +24,38 @@ async function defaultBackoff(attempt: number = 0, maxRetries: number = 5) {
   )
 }
 
-export interface RetryOptions {
-  /**
-   * How many times the query will be retried (default: 5)
-   */
-  maxRetries?: number
+type _RetryOptions = {
   /**
    * Function used to determine delay between retries
    */
-  backoff?: (attempt: number, maxRetries: number) => Promise<void>
+  backoff: (attempt: number, maxRetries: number) => Promise<void>
+
+  /**
+   * How many times the query will be retried (default: 5)
+   */
+  maxRetries: number
+
   /**
    * Callback to determine if a retry should be attempted.
    * Return `true` for another retry and `false` to quit trying prematurely.
    */
-  retryCondition?: (error: FetchBaseQueryError, args: BaseQueryArg<BaseQueryFn>, extraArgs: {
+  retryCondition: (error: FetchBaseQueryError, args: BaseQueryArg<BaseQueryFn>, extraArgs: {
     attempt: number
     maxRetries: number
     baseQueryApi: BaseQueryApi
     extraOptions: BaseQueryExtraOptions<BaseQueryFn> & RetryOptions
   }) => boolean
 }
+
+export type RetryOptions = {
+  backoff?: _RetryOptions['backoff']
+} & ({
+  maxRetries?: _RetryOptions['maxRetries']
+  retryCondition?: never
+} | {
+  maxRetries?: never
+  retryCondition?: _RetryOptions['retryCondition']
+})
 
 function fail(e: any): never {
   throw Object.assign(new HandledError({ error: e }), {
@@ -58,7 +70,7 @@ const retryWithBackoff: BaseQueryEnhancer<
 > = (baseQuery, defaultOptions) => async (args, api, extraOptions) => {
   const defaultRetryCondition: Exclude<RetryOptions['retryCondition'], undefined> = (_, __, {attempt, maxRetries}) => attempt <= maxRetries
 
-  const options = {
+  const options: _RetryOptions = {
     maxRetries: 5,
     backoff: defaultBackoff,
     retryCondition: defaultRetryCondition,
