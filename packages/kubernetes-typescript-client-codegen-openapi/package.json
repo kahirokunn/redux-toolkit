@@ -1,26 +1,24 @@
 {
-  "name": "@rtk-query/codegen-openapi",
+  "name": "kubernetes-typescript-client-codegen-openapi",
   "version": "1.0.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "author": "Lenz Weber",
+  "author": "kahirokunn",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/reduxjs/redux-toolkit.git"
+    "url": "git+https://github.com/kahirokunn/kubernetes-typescript-client-codegen-openapi.git"
   },
   "bugs": {
-    "url": "https://github.com/reduxjs/redux-toolkit/issues"
+    "url": "https://github.com/kahirokunn/kubernetes-typescript-client-codegen-openapi/issues"
   },
-  "homepage": "https://redux-toolkit.js.org",
-  "bin": {
-    "rtk-query-codegen-openapi": "lib/bin/cli.js"
-  },
+  "homepage": "https://github.com/kahirokunn/kubernetes-typescript-client-codegen-openapi",
+  "bin": "lib/bin/cli.js",
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build && chmod +x ./lib/bin/cli.js",
     "format": "prettier --write \"src/**/*.ts\"",
-    "test:update": "lib/bin/cli.js test/fixtures/petstore.json --file test/fixtures/generated.ts -h",
+    "test:update": "jest --runInBand --updateSnapshot",
     "test": "jest --runInBand",
     "cli": "esr src/bin/cli.ts"
   },
@@ -61,6 +59,9 @@
     "prettier": "^2.2.1",
     "semver": "^7.3.5",
     "swagger2openapi": "^7.0.4",
+    "typescript": ">=4.1 <=4.5"
+  },
+  "resolutions": {
     "typescript": ">=4.1 <=4.5"
   },
   "husky": {
